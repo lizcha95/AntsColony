@@ -1,11 +1,11 @@
 ArrayList<Hormiga> hormigas;
+ArrayList<Comida> comida;
 
 Nido nido;
 float nido_posx;
 float nido_posy;
 float width_nido = 100;
 float height_nido = 80;
-color color_nido = color(200, 200, 200);
 PImage cesped;
 PImage hormiguero;
 
@@ -17,6 +17,7 @@ void setup(){
   nido_posx = width-100;
   nido_posy = height-90;
   hormigas = new ArrayList();
+  comida = new ArrayList();
   cesped = loadImage("cesped.jpg");
   cesped.resize(width,height);
   hormiguero = loadImage("Hormiguero2.jpg");
@@ -36,8 +37,17 @@ void draw(){
   background(cesped);
   
   nido.run();
+  for (Comida c : comida) {
+        c.display();
+  }
+  
  for (Hormiga h : hormigas) {
         h.show();
   }
+
   
+}
+
+void mousePressed(){
+   comida.add(new Comida(mouseX,mouseY,10,10));
 }
