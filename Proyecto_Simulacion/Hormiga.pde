@@ -1,5 +1,5 @@
 class Hormiga{
-  float antSize = 0.06;
+  float antSize = 0.04;
   PVector ubicacion;
   PVector velocidad = new PVector(cos(random(TWO_PI)), sin(random(TWO_PI)));
   
@@ -41,8 +41,9 @@ class Hormiga{
       rectMode(CENTER);
       rect(0, -foodGathered.h, foodGathered.w, foodGathered.h);
     }*/
+    //fill(#B25F1B);
     fill(0);
-    stroke(0);
+    stroke(3);
     //cabeza
     beginShape();
     vertex(cabeza[0], cabeza[1]); // first point, y = -4x + 120 ((40, -40) and (25, 20))
