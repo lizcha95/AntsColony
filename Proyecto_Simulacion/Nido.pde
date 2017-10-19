@@ -25,11 +25,11 @@ class Nido {
     unoccupied[1] = 0;*/
   }
   void run() {
-    show(); 
+    display(); 
    // showStorages();
   }
 
-  void show() {
+  void display() {
     stroke(0);
     fill(128);
     //rectMode(CENTER);

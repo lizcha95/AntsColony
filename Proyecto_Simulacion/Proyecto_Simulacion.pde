@@ -14,14 +14,14 @@ void setup(){
   background(0);
   
   // Posicion del nido 
-  nido_posx = width-100;
-  nido_posy = height-90;
+  nido_posx = width-200;
+  nido_posy = height-130;
   hormigas = new ArrayList();
   comida = new ArrayList();
   cesped = loadImage("cesped.jpg");
   cesped.resize(width,height);
-  hormiguero = loadImage("Hormiguero2.jpg");
-  hormiguero.resize(100,80);
+  hormiguero = loadImage("hormiguero.png");
+  //hormiguero.resize(200,200);
   
   nido = new Nido(width_nido,height_nido,nido_posx,nido_posy); //Se crea el nido
   
@@ -42,10 +42,8 @@ void draw(){
   }
   
  for (Hormiga h : hormigas) {
-        h.show();
+        h.display();
   }
-
-  
 }
 
 void mousePressed(){

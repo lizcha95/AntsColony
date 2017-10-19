@@ -30,7 +30,7 @@ class Hormiga{
     
   }
   
-   void show() { //Dibuja las hormigas
+   void display() { //Dibuja las hormigas
     float angle = velocidad.heading() + PI/2;//the ant initially points to the north
     pushMatrix();
     translate(ubicacion.x, ubicacion.y);
