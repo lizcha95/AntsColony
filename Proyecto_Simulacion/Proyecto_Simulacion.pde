@@ -20,13 +20,13 @@ void setup(){
   comida = new ArrayList();
   cesped = loadImage("cesped.jpg");
   cesped.resize(width,height);
-  hormiguero = loadImage("hormiguero.png");
+  hormiguero = loadImage("hormiguero4.png");
   //hormiguero.resize(200,200);
   
   nido = new Nido(width_nido,height_nido,nido_posx,nido_posy); //Se crea el nido
   
   //Se agregan las hormigas al arreglo
-  for(int i = 0; i<1; i++){
+  for(int i = 0; i<10; i++){
     Hormiga hormiga = new Hormiga(nido_posx,nido_posy);
     hormiga.cambiar_Tamanio();
     hormigas.add(hormiga);
