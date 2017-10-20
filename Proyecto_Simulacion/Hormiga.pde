@@ -1,8 +1,16 @@
 class Hormiga{
   float antSize = 0.09;
-  PVector ubicacion;
-  PVector velocidad = new PVector(cos(random(TWO_PI)), sin(random(TWO_PI)));
   
+ // PVector velocidad = new PVector(cos(random(TWO_PI)), sin(random(TWO_PI)));
+ 
+  float maxSpeed;
+  float maxForce;
+  float mass;
+  float size;
+  PVector vel;
+  PVector acc;
+  PVector pos;
+
   //Establece los puntos para dibujar las hormigas
   //cabeza, pecho, cuerpo
   float[] cabeza = {-25, 20, -40, -40, 40, -40, 25, 20, 10, 80, -10, 80, -25, 20};
@@ -25,15 +33,53 @@ class Hormiga{
   float[] leg2RU = {8, 150, 20, 150, 150, 180, 180, 220};
   float[] leg2RD = {8, 150, 20, 170, 140, 200, 120, 340};
   
-  Hormiga(float posx, float posy){
-    ubicacion = new PVector(posx,posy);
+  Hormiga(float posx, float posy, PVector vel){
+    pos = new PVector(posx,posy);
+    this.vel = vel;
+    acc = new PVector (0,0);
+    mass = random(1.5,2.5);
+    size = 10;
+    maxSpeed =random(3,5);
+    maxForce = random(0.04,0.1);
+    
     
   }
   
+   void update(){
+    vel.add(acc);
+    vel.limit(maxSpeed);
+    pos.add(vel);
+    acc.mult(0);
+    borders();
+    
+  }
+  
+  void applyForce (PVector force){
+    PVector f = PVector.div(force, mass);
+    acc.add(f);
+  }
+  
+   void seek(PVector target){
+    PVector desired = PVector.sub(target, pos);
+    desired.setMag(maxSpeed);
+    PVector steering = PVector.sub(desired,vel);
+    steering.limit(maxForce);
+    applyForce(steering);
+  }
+  
+   void borders() {
+    if (pos.x <= 20 || pos.x >= width-20 ) {
+      vel.x *= -1;
+    }
+    if (pos.y <= 20 || pos.y >= height-20 ) {
+      vel.y *= -1;
+    }
+  }
+  
    void display() { //Dibuja las hormigas
-    float angle = velocidad.heading() + PI/2;//the ant initially points to the north
+    float angle = vel.heading() + PI/2;//the ant initially points to the north
     pushMatrix();
-    translate(ubicacion.x, ubicacion.y);
+    translate(pos.x, pos.y);
     rotate(angle);
    /* if (gathered) {// when the ant carrys food
       fill(foodColors[foodGathered.foodColorNum]);

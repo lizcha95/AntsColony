@@ -329,6 +329,8 @@ class Ant {
     steer.limit(maxForce); 
     return steer;
   }
+  
+
 
   void wander() {
     maxNumWandering = (int) random(300, 500);
