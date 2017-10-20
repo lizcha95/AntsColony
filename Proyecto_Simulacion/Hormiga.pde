@@ -1,5 +1,5 @@
 class Hormiga{
-  float antSize = 0.04;
+  float antSize = 0.09;
   PVector ubicacion;
   PVector velocidad = new PVector(cos(random(TWO_PI)), sin(random(TWO_PI)));
   
@@ -138,15 +138,15 @@ class Hormiga{
   
    void cambiar_Tamanio() {
     for (int i = 0; i < 14; i++) {
-     cabeza[i] *= antSize;
+     cabeza[i] *= 0.08;
       cuerpo[i] *= antSize;
     }
     for (int i = 0; i < 4; i++) {
       pecho[i] *= antSize;
     }
     for (int i = 0; i < 8; i++) {
-      antena_Izq[i] *= antSize;
-      antena_Der[i] *= antSize;
+      antena_Izq[i] *= 0.08;
+      antena_Der[i] *= 0.08;
       leg0LU[i] *= antSize;
       leg0LD[i] *= antSize;
       leg0RU[i] *= antSize;

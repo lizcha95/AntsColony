@@ -11,6 +11,7 @@ PImage hormiguero;
 
 void setup(){
   size(800,600);
+  //fullScreen();
   background(0);
   
   // Posicion del nido 
@@ -26,7 +27,7 @@ void setup(){
   nido = new Nido(width_nido,height_nido,nido_posx,nido_posy); //Se crea el nido
   
   //Se agregan las hormigas al arreglo
-  for(int i = 0; i<10; i++){
+  for(int i = 0; i<1; i++){
     Hormiga hormiga = new Hormiga(nido_posx,nido_posy);
     hormiga.cambiar_Tamanio();
     hormigas.add(hormiga);
