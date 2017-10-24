@@ -1,15 +1,24 @@
+/*
+El Código para dibujar las hormigas fue tomado de la siguiente fuente:
+
+https://www.openprocessing.org/sketch/428938
+
+Autor: Jae Cheol Kim
+
+*/
+
 class Hormiga{
   float antSize = 0.09;
-  
- // PVector velocidad = new PVector(cos(random(TWO_PI)), sin(random(TWO_PI)));
- 
   float maxSpeed;
   float maxForce;
   float mass;
   float size;
+  float separationDistance;
+  float separationRatio;
   PVector vel;
   PVector acc;
   PVector pos;
+  
 
   //Establece los puntos para dibujar las hormigas
   //cabeza, pecho, cuerpo
@@ -39,10 +48,11 @@ class Hormiga{
     acc = new PVector (0,0);
     mass = random(1.5,2.5);
     size = 10;
-    maxSpeed =random(3,5);
+    maxSpeed =random(2,3);
     maxForce = random(0.04,0.1);
-    
-    
+    separationDistance = 10;
+    separationRatio = 1;
+     
   }
   
    void update(){
@@ -50,8 +60,7 @@ class Hormiga{
     vel.limit(maxSpeed);
     pos.add(vel);
     acc.mult(0);
-    borders();
-    
+ 
   }
   
   void applyForce (PVector force){
@@ -76,32 +85,27 @@ class Hormiga{
     }
   }
   
+  
+
    void display() { //Dibuja las hormigas
-    float angle = vel.heading() + PI/2;//the ant initially points to the north
+    float angle = vel.heading() + PI/2;
     pushMatrix();
     translate(pos.x, pos.y);
     rotate(angle);
-   /* if (gathered) {// when the ant carrys food
-      fill(foodColors[foodGathered.foodColorNum]);
-      stroke(0);
-      rectMode(CENTER);
-      rect(0, -foodGathered.h, foodGathered.w, foodGathered.h);
-    }*/
-    //fill(#B25F1B);
     fill(0);
     stroke(3);
     //cabeza
     beginShape();
-    vertex(cabeza[0], cabeza[1]); // first point, y = -4x + 120 ((40, -40) and (25, 20))
-    bezierVertex(cabeza[2], cabeza[3], cabeza[4], cabeza[5], cabeza[6], cabeza[7]);// y = -4x + 120 ((40, -40) and (25, 20))
+    vertex(cabeza[0], cabeza[1]); 
+    bezierVertex(cabeza[2], cabeza[3], cabeza[4], cabeza[5], cabeza[6], cabeza[7]);
     bezierVertex(cabeza[8], cabeza[9], cabeza[10], cabeza[11], cabeza[12], cabeza[13]);
     endShape();
     //pecho
     ellipse(pecho[0], pecho[1], pecho[2], pecho[3]);
     //body
     beginShape();
-    vertex(cuerpo[0], cuerpo[1]); // first point, y = -3x +95 ((-20, 155) and (-35, 200))
-    bezierVertex(cuerpo[2], cuerpo[3], cuerpo[4], cuerpo[5], cuerpo[6], cuerpo[7]);// y = -4x + 120 ((40, -40) and (25, 20))
+    vertex(cuerpo[0], cuerpo[1]); 
+    bezierVertex(cuerpo[2], cuerpo[3], cuerpo[4], cuerpo[5], cuerpo[6], cuerpo[7]);
     bezierVertex(cuerpo[8], cuerpo[9], cuerpo[10], cuerpo[11], cuerpo[12], cuerpo[13]);
     endShape();
     //antena
@@ -182,6 +186,42 @@ class Hormiga{
     popMatrix();
   }
   
+   void separar(ArrayList<Hormiga> hormigas) {
+    PVector average = new PVector(0, 0);
+    int count = 0;
+    for (Hormiga h : hormigas) {
+      float d = PVector.dist(pos, h.pos);
+      if (this != h && d < separationDistance) {
+        PVector difference = PVector.sub(pos, h.pos);
+        difference.normalize();
+        difference.div(d);
+        average.add(difference);
+        count++;
+      }
+    }
+    if (count > 0) {
+      average.div(count);
+      average.setMag(separationRatio);
+      average.limit(maxForce);
+      applyForce(average);
+    }
+  }
+  
+   
+  PVector atraer(Hormiga hormiga) {
+    float G = 0.05;
+    PVector force = PVector.sub(pos, hormiga.pos);
+    float distance = force.magSq();
+    distance = constrain(distance, 5, 300);
+    force.normalize();
+    force.mult(G * hormiga.mass * mass);
+    force.div(distance);
+    hormiga.applyForce(force);
+
+    
+    return force;
+  }
+  
    void cambiar_Tamanio() {
     for (int i = 0; i < 14; i++) {
      cabeza[i] *= 0.08;
@@ -205,6 +245,17 @@ class Hormiga{
       leg2LD[i] *= antSize;
       leg2RU[i] *= antSize;
       leg2RD[i] *= antSize;
+    }
+  }
+  
+  void Aplicar_atraccion() {
+    for(Hormiga p : hormigas) {
+      for(int i = 0; i < comida.size(); i++) {
+        Comida a = comida.get(i);
+        PVector forceHormiga = a.atraer(p);
+        p.applyForce(forceHormiga);
+        
+      }
     }
   }
 

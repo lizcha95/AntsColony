@@ -3,22 +3,38 @@ class Comida {
   float posy;
   float width_food;
   float height_food;
-  //boolean spotted;
-  //int foodColorNum;
+  PVector pos;
+  float mass;
   
   Comida(float posx, float posy, float width_food, float height_food) {
+   pos = new PVector(posx,posy);
    this.posx = posx;
    this.posy = posy;
    this.width_food = width_food;
    this. height_food = height_food;
-    //foodColorNum = num;
-    //spotted = false;
+   mass = random(1.5,2.5);
   }
 
   void display() {
     stroke(3);
     fill(255,0,0);
-    //rectMode(CENTER);
+    rectMode(CENTER);
     rect(posx, posy, width_food, height_food);
   }
+  
+  PVector atraer(Hormiga hormiga) {
+    float G = 0.04;
+    PVector force = PVector.sub(pos, hormiga.pos);
+    float distance = force.magSq();
+    distance = constrain(distance, 4, 200);
+    force.normalize();
+    force.mult(G * hormiga.mass * mass);
+    force.div(distance);
+    hormiga.applyForce(force);
+
+    
+    return force;
+  }
+  
+ 
 }
