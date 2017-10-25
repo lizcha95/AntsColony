@@ -1,13 +1,13 @@
 /*
 El Código para dibujar las hormigas fue tomado de la siguiente fuente:
+ 
+ https://www.openprocessing.org/sketch/428938
+ 
+ Autor: Jae Cheol Kim
+ 
+ */
 
-https://www.openprocessing.org/sketch/428938
-
-Autor: Jae Cheol Kim
-
-*/
-
-class Hormiga{
+class Hormiga {
   float antSize = 0.09;
   float maxSpeed;
   float maxForce;
@@ -18,7 +18,8 @@ class Hormiga{
   PVector vel;
   PVector acc;
   PVector pos;
-  
+  float wandertheta;
+
 
   //Establece los puntos para dibujar las hormigas
   //cabeza, pecho, cuerpo
@@ -41,42 +42,41 @@ class Hormiga{
   float[] leg1RD = {11, 100, 15, 100, 85, 100, 130, 140};
   float[] leg2RU = {8, 150, 20, 150, 150, 180, 180, 220};
   float[] leg2RD = {8, 150, 20, 170, 140, 200, 120, 340};
-  
-  Hormiga(float posx, float posy, PVector vel){
-    pos = new PVector(posx,posy);
+
+  Hormiga(float posx, float posy, PVector vel) {
+    pos = new PVector(posx, posy);
     this.vel = vel;
-    acc = new PVector (0,0);
-    mass = random(1.5,2.5);
+    acc = new PVector (0, 0);
+    mass = random(1.5, 2.5);
     size = 10;
-    maxSpeed =random(2,3);
-    maxForce = random(0.04,0.1);
+    maxSpeed =random(2, 3);
+    maxForce = random(0.04, 0.1);
     separationDistance = 10;
     separationRatio = 1;
-     
+    wandertheta = 0;
   }
-  
-   void update(){
+
+  void update() {
     vel.add(acc);
     vel.limit(maxSpeed);
     pos.add(vel);
     acc.mult(0);
- 
   }
-  
-  void applyForce (PVector force){
+
+  void applyForce (PVector force) {
     PVector f = PVector.div(force, mass);
     acc.add(f);
   }
-  
-   void seek(PVector target){
+
+  void seek(PVector target) {
     PVector desired = PVector.sub(target, pos);
     desired.setMag(maxSpeed);
-    PVector steering = PVector.sub(desired,vel);
+    PVector steering = PVector.sub(desired, vel);
     steering.limit(maxForce);
     applyForce(steering);
   }
-  
-   void borders() {
+
+  void borders() {
     if (pos.x <= 20 || pos.x >= width-20 ) {
       vel.x *= -1;
     }
@@ -84,10 +84,10 @@ class Hormiga{
       vel.y *= -1;
     }
   }
-  
-  
 
-   void display() { //Dibuja las hormigas
+
+
+  void display() { //Dibuja las hormigas
     float angle = vel.heading() + PI/2;
     pushMatrix();
     translate(pos.x, pos.y);
@@ -117,11 +117,11 @@ class Hormiga{
     endShape();
     beginShape();
     vertex(antena_Der[0], antena_Der[1]);
-    bezierVertex(antena_Der[2],antena_Der[3], antena_Der[4], antena_Der[5],antena_Der[6], antena_Der[7]);
+    bezierVertex(antena_Der[2], antena_Der[3], antena_Der[4], antena_Der[5], antena_Der[6], antena_Der[7]);
     endShape();
-    
+
     //lado izquierdo
-   
+
     if (frameCount%30 <= 15) {
       beginShape();
       vertex(leg0LU[0], leg0LU[1]);
@@ -185,8 +185,8 @@ class Hormiga{
     }
     popMatrix();
   }
-  
-   void separar(ArrayList<Hormiga> hormigas) {
+
+  void separar(ArrayList<Hormiga> hormigas) {
     PVector average = new PVector(0, 0);
     int count = 0;
     for (Hormiga h : hormigas) {
@@ -206,8 +206,8 @@ class Hormiga{
       applyForce(average);
     }
   }
-  
-   
+
+
   PVector atraer(Hormiga hormiga) {
     float G = 0.05;
     PVector force = PVector.sub(pos, hormiga.pos);
@@ -218,13 +218,13 @@ class Hormiga{
     force.div(distance);
     hormiga.applyForce(force);
 
-    
+
     return force;
   }
-  
-   void cambiar_Tamanio() {
+
+  void cambiar_Tamanio() {
     for (int i = 0; i < 14; i++) {
-     cabeza[i] *= 0.08;
+      cabeza[i] *= 0.08;
       cuerpo[i] *= antSize;
     }
     for (int i = 0; i < 4; i++) {
@@ -247,16 +247,35 @@ class Hormiga{
       leg2RD[i] *= antSize;
     }
   }
-  
+
   void Aplicar_atraccion() {
-    for(Hormiga p : hormigas) {
-      for(int i = 0; i < comida.size(); i++) {
+    for (Hormiga p : hormigas) {
+      for (int i = 0; i < comida.size(); i++) {
         Comida a = comida.get(i);
         PVector forceHormiga = a.atraer(p);
         p.applyForce(forceHormiga);
-        
       }
     }
   }
 
+  //Add movement to the ant
+  void wander() {
+    float wanderR = 15;         // Radius for our "wander circle"
+    float wanderD = 30;         // Distance for our "wander circle"
+    float change = 0.3;
+    wandertheta += random(-change, change);     // Randomly change wander theta
+
+    // Now we have to calculate the new position to steer towards on the wander circle
+    PVector circlepos = vel.get();    // Start with velocity
+    circlepos.normalize();            // Normalize to get heading
+    circlepos.mult(wanderD);          // Multiply by distance
+    circlepos.add(pos);               // Make it relative to boid's position
+
+    float h = vel.heading2D();        // We need to know the heading to offset wandertheta
+
+    PVector circleOffSet = new PVector(wanderR*cos(wandertheta+h), wanderR*sin(wandertheta+h));
+    PVector target = PVector.add(circlepos, circleOffSet);
+    seek(target);
+  }
+ 
 }

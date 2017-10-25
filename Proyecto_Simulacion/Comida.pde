@@ -1,6 +1,4 @@
 class Comida {
-  float posx;
-  float posy;
   float width_food;
   float height_food;
   PVector pos;
@@ -8,8 +6,6 @@ class Comida {
   
   Comida(float posx, float posy, float width_food, float height_food) {
    pos = new PVector(posx,posy);
-   this.posx = posx;
-   this.posy = posy;
    this.width_food = width_food;
    this. height_food = height_food;
    mass = random(1.5,2.5);
@@ -19,7 +15,7 @@ class Comida {
     stroke(3);
     fill(255,0,0);
     rectMode(CENTER);
-    rect(posx, posy, width_food, height_food);
+    rect(pos.x, pos.y, width_food, height_food);
   }
   
   PVector atraer(Hormiga hormiga) {
