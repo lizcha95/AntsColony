@@ -16,11 +16,7 @@ class Nido {
     this.filas = (int) height_nido/almacenamiento; 
     this.columnas = (int) width_nido/almacenamiento;
   }
-  void run() {
-    display(); 
   
-  }
-
   void display() {
     stroke(0);
     fill(128);
