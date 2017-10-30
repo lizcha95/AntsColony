@@ -60,7 +60,7 @@ void draw() {
   for (Hormiga h : hormigas) {
     h.wander();
     h.update();
-    h.separar(hormigas);
+   // h.separar(hormigas);
     h.borders();
     h.display();
   }
