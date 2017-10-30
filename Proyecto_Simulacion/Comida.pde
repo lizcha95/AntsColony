@@ -14,8 +14,11 @@ class Comida {
   void display() {
     stroke(3);
     fill(255,0,0);
-    rectMode(CENTER);
-    rect(pos.x, pos.y, width_food, height_food);
+   // rectMode(CENTER);
+    //rect(pos.x, pos.y, width_food, height_food);
+    
+    imageMode(CENTER);
+    image(hoja,pos.x,pos.y,width_food,height_food);
   }
   
   PVector atraer(Hormiga hormiga) {
