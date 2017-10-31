@@ -17,6 +17,7 @@ ArrayList<Hormiga> hormigas;
 ArrayList<Comida> comida;
 ArrayList<Feromona> feromonas;
 Feromona feromona;
+Hormiga hormiga;
 
 
 Nido nido;
@@ -43,13 +44,13 @@ void setup() {
   cesped = loadImage("degradado.jpg");
   cesped.resize(width, height);
   hormiguero = loadImage("hormiguero2.png");
-  hoja = loadImage("hoja.png");
+  hoja = loadImage("hoja1.png");
   //hormiguero.resize(200,200);
 
   nido = new Nido(width_nido, height_nido, nido_posx, nido_posy); //Se crea el nido
 
   //Se agregan las hormigas al arreglo
-  for (int i = 0; i<20; i++) {
+  for (int i = 0; i<5; i++) {
     Hormiga hormiga = new Hormiga(nido_posx, nido_posy, PVector.random2D());
     hormiga.cambiar_Tamanio();
     hormigas.add(hormiga);
@@ -57,6 +58,7 @@ void setup() {
 }
 
 void draw() {
+  
   background(cesped);
 
   nido.display();
@@ -68,27 +70,33 @@ void draw() {
   for (Hormiga h : hormigas) {
     h.wander();
     h.update();
-    h.desaparecerFeromonas(feromonas);
-   // h.separar(hormigas);
-    h.borders();
+    h.agregarFeromonas(feromonas);
+    h.buscar_comida(h);
+    h.bordes();
     h.display();
+    
   }
   
   for (Feromona f: feromonas){
     f.display();
-   
+  
   }
   updateFeromona();
+
 }
 
-void updateFeromona() {
-  for (int i = feromonas.size() - 1; i >= 0; i--) {
-    Feromona p = feromonas.get(i);
-    if (p.evaporation >= 255) {
-      feromonas.remove(p);
+void updateFeromona(){
+  
+  Iterator<Feromona> iter = feromonas.iterator();
+
+   while (iter.hasNext()) {
+    Feromona f = iter.next();
+
+    if (f.evaporacion >= 255){
+        iter.remove();
     }
-  }
+   }
 }
+
 void mousePressed() {
-  comida.add(new Comida(mouseX, mouseY, 80, 70));
-}
+  comida.add(new Comida(mouseX, mouseY, 80, 70));}

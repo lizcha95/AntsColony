@@ -19,8 +19,9 @@ class Hormiga {
   PVector acc;
   PVector pos;
   float wandertheta;
-  float distancia;
+  float distancia_recorrida;
   Feromona feromona;
+  float arrivalRadius = 200;
   
 
 
@@ -64,7 +65,7 @@ class Hormiga {
     vel.limit(maxSpeed);
     pos.add(vel);
     acc.mult(0);
-    distancia += vel.mag();
+    distancia_recorrida += vel.mag(); //A la distancia que llevan las hormigas se les suma la magnitud de la velocidad
   }
 
   void applyForce (PVector force) {
@@ -80,7 +81,7 @@ class Hormiga {
     applyForce(steering);
   }
 
-  void borders() {
+  void bordes() {
     if (pos.x <= 20 || pos.x >= width-20 ) {
       vel.x *= -1;
     }
@@ -89,40 +90,45 @@ class Hormiga {
     }
   }
   
-  boolean hormigas_fuera_del_nido(float posx, float posy){
+  /*boolean hormigas_fuera_del_nido(float posx, float posy){
       float posx1 = nido.posx - nido.width_nido/2;
       float posy1 = nido.posy - nido.height_nido/2;
       
       float posx2 = nido.posx + nido.width_nido/2;
       float posy2 = nido.posy - nido.height_nido/2;
       
-      if(posx >= posx1 && posx <= posx2 && posy >= posy1 && posy <= posy2){
+    
+     if(posx >= posx1 && posx <= posx2 && posy >= posy1 && posy <= posy2){
         return true;
       }
       else{
         return false;
       }
-  }
+  }*/
 
 
-  void desaparecerFeromonas(ArrayList<Feromona> feromonas) {
-      int pasos = 60;
-      
-      /*if (gathered)
-        steps = 30;/*/
-   
-      if ((int) distancia % pasos == 0 && !hormigas_fuera_del_nido(pos.x,pos.y) ){
-        PVector ubicacion_feromona = new PVector(pos.x + random(1), pos.y + random(1));
+  void agregarFeromonas(ArrayList<Feromona> feromonas) {
+      int pasos = 150;
+      if ((int) distancia_recorrida % pasos == 0) {
+        PVector ubicacion_feromona = new PVector(pos.x + random(-3, 3), pos.y + random(-3, 3)); // Se agregan feromonas en la posicion de la hormiga
         feromona = new Feromona(ubicacion_feromona.x, ubicacion_feromona.y);
         feromonas.add(feromona);
-        if (feromonas.size() > 1000) {
-          feromonas.remove(0);
-        }
       }
     }
-
-  
- 
+    
+   
+    void arrive(PVector target){
+    PVector desired = PVector.sub(target, pos);
+    float d = PVector.dist(pos, target);
+    d = constrain(d, 0, arrivalRadius);
+    float  speed  = map(d, 0, arrivalRadius, 0, maxSpeed);
+    vel.setMag(speed);
+    PVector steering = PVector.sub(desired, vel);
+    steering.limit(maxForce);
+    applyForce(steering);
+    
+  }
+    
   void display() { //Dibuja las hormigas
     float angle = vel.heading() + PI/2;
     pushMatrix();
@@ -284,13 +290,13 @@ class Hormiga {
     }
   }
 
-  void Aplicar_atraccion() {
-    for (Hormiga p : hormigas) {
+  void buscar_comida(Hormiga h) {
+    
       for (int i = 0; i < comida.size(); i++) {
         Comida a = comida.get(i);
-        PVector forceHormiga = a.atraer(p);
-        p.applyForce(forceHormiga);
-      }
+        PVector pos_comida = new PVector(a.pos.x,a.pos.y);
+        h.seek(pos_comida);
+      
     }
   }
 
