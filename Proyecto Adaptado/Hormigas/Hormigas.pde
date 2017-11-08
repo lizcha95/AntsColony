@@ -12,11 +12,13 @@
  Liza Chaves Carranza
  
  *********************************************************/
+import controlP5.*;
 
 ArrayList<Hormiga> hormigas;
 ArrayList<Comida> comida;
 ArrayList<Feromona> feromonas;
 ArrayList<Float> valor_feromonas;
+ControlP5 cp5;
 
 boolean[] estados_hormigas;
 
@@ -44,19 +46,19 @@ void setup() {
   // Posicion del nido 
   nido_posx = width-200;
   nido_posy = height-130;
-  
+
   hormigas = new ArrayList();
   comida = new ArrayList();
   feromonas = new ArrayList();
   estados_hormigas =new boolean[6]; 
-  
+
   estados_hormigas[0] = true;
   estados_hormigas[1] = false;
   estados_hormigas[2] = false;
   estados_hormigas[3] = false;
   estados_hormigas[4] = false;
   estados_hormigas[5] = false;
-  
+
   cesped = loadImage("degradado.jpg");
   cesped.resize(width, height);
   hormiguero = loadImage("hormiguero2.png");
@@ -69,25 +71,26 @@ void setup() {
   for (int i = 0; i<10; i++) {
     Hormiga hormiga = new Hormiga(nido_posx, nido_posy, VELOCIDAD);
     hormiga.cambiar_Tamanio();
-    hormigas.add(hormiga);   
+    hormigas.add(hormiga);
   }
 
+  initControls();
 }
 
 void draw() {
-  
+
   background(cesped);
 
   nido.display();
-  
-  for(Hormiga h: hormigas){
+
+  for (Hormiga h : hormigas) {
     h.display();
-   // h.update();
-   
-    
+    // h.update();
+
+
     h.agregarFeromonas();
     h.separate(); // an ant dodges if it encounters another
-   // println("Estoy en wander");
+    // println("Estoy en wander");
     if (estados_hormigas[0] == true) {// an ant wanders
       h.wander(); 
       println("Estoy en wander");
@@ -133,7 +136,7 @@ void draw() {
           h.cambiarEstado(estados_hormigas, 3); // state changes to 3
         } else { // if the ant does not find a pheromone
           h.cambiarEstado(estados_hormigas, 0); // state changes to 0 (the ant with the food wanders)
-      }
+        }
       }
     } else if (estados_hormigas[3]) {// an ant knows where a pheromone is 
       h.mover_hacia_feromona(); // the ant goes to the pheromone
@@ -174,34 +177,53 @@ void draw() {
     }
     h.update(); 
     h.bordes();
+  } 
 
-    } 
-  
- for (Comida c : comida) {
+  for (Comida c : comida) {
     c.display();
   }
-  
-  for (Feromona f: feromonas){
+
+  for (Feromona f : feromonas) {
     f.display();
-  
   }
   updateFeromona();
-
 }
 
-void updateFeromona(){
-  
+void updateFeromona() {
+
   Iterator<Feromona> iter = feromonas.iterator();
 
-   while (iter.hasNext()) {
+  while (iter.hasNext()) {
     Feromona f = iter.next();
 
-    if (f.evaporacion >= 255){
-        iter.remove();
+    if (f.evaporacion >= 255) {
+      iter.remove();
     }
-   }
+  }
 }
 
 void mousePressed() {
   comida.add(new Comida(mouseX, mouseY, 80, 70));
+}
+
+void initControls() {
+  cp5 = new ControlP5(this);
+
+  cp5.addSlider("MUTATION_RATE")
+    .setPosition(50, 50)
+    .setRange(0.01, 0.1)
+    .setSize(300, 20)
+    .setCaptionLabel("Duración Feromonas");
+
+  cp5.addSlider("FLOCK_SIZE")
+    .setPosition(50, 40)
+    .setRange(0, 1000)
+    .setSize(300, 20)
+    .setCaptionLabel("Radio de Feromonas");
+
+  cp5.addSlider("FLOCK_SIZE")
+    .setPosition(50, 30)
+    .setRange(0, 1000)
+    .setSize(300, 20)
+    .setCaptionLabel("Cantidad de Hormigas");
 }
