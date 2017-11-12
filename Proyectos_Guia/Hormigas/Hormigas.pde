@@ -182,8 +182,10 @@ class Ant {
   float maxSpeed = 1.5;
   float maxForce = 0.4;
   float movingDistance; // needed for determining phero dropping interval
+  
   int numWandering = 0;
   int maxNumWandering = 0; // an ant randomly changes moving direcions after a certain number of steps
+  
   Food foodGathered;
   boolean found; // food or phero found
   boolean reached; // food or phero reached
@@ -337,6 +339,7 @@ class Ant {
     numWandering++;
     if (numWandering >= maxNumWandering) { 
       target = PVector.random2D(); // new andom target
+       println("target de wander: " + target);
       target.mult(1500);
       PVector steer = seek();
       acceleration.add(steer);
