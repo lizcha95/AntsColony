@@ -13,11 +13,8 @@ class Comida {
   }
 
   void mostrar() {
-    stroke(0);
-    rectMode(CENTER);
-    rect(pos.x, pos.y, tamanno.x, tamanno.y);
-    
+  
     imageMode(CENTER);
-    image(hoja,pos.x,pos.y,50,40);
+    image(hoja,pos.x,pos.y,70,60);
   }
 }

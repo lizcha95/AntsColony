@@ -22,6 +22,7 @@ class Nido {
   }
 
   void mostrarNido() {
+    
     imageMode(CENTER);
     image(hormiguero, pos.x, pos.y, tamanno.x, tamanno.y);
   }
@@ -30,10 +31,9 @@ class Nido {
     for (int j = 0; j < columnas-1; j++) {
       for (int i = 0; i < filas-1; i++) {
         if (almacenamiento[i][j] != null) {
-          Comida f = almacenamiento[i][j];
-          fill(0, 255, 0);
-          rectMode(CORNER);
-          rect(f.pos.x, f.pos.y, f.tamanno.x, f.tamanno.y);
+          Comida f = almacenamiento[i][j];   
+         imageMode(CENTER);
+         image(hoja,f.pos.x,f.pos.y,50,40);
         }
       }
     }
@@ -41,14 +41,15 @@ class Nido {
 
   void almacenar(Comida comida) {
     if (almacenamiento[0][0] == null) {
-      comida.pos.x = pos.x - tamanno.x/2 +2;
-      comida.pos.y = pos.y + tamanno.y/2 - tamannoAlmacenamiento -2; 
+      
+      comida.pos.x = pos.x - ancho_almacenamiento/2 +2;
+      comida.pos.y = pos.y + altura_almacenamiento/2 - tamannoAlmacenamiento -2; 
       almacenamiento[0][0] = comida;
       disponible[0] = 0;
       disponible[1] = 1;
     } else {
-      comida.pos.x = pos.x - tamanno.x/2 + tamannoAlmacenamiento * disponible[1] +2;
-      comida.pos.y = pos.y + tamanno.y/2 - tamannoAlmacenamiento * disponible[0] - tamannoAlmacenamiento -2;
+      comida.pos.x = pos.x - ancho_almacenamiento/2 + tamannoAlmacenamiento * disponible[1] +2;
+      comida.pos.y = pos.y + altura_almacenamiento/2 - tamannoAlmacenamiento * disponible[0] - tamannoAlmacenamiento -2;
       almacenamiento[disponible[0]][disponible[1]] = comida;
       disponible[1]++;
       if (disponible[1] == columnas-1 ) {
@@ -72,7 +73,7 @@ class Nido {
 
   boolean cercaNido(float posX, float posY) {
     float distancia = abs(posX - pos.x) + abs(posY - pos.y);
-    if (distancia < 200) 
+    if (distancia < 100) 
       return true;
     else
       return false;

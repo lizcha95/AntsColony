@@ -60,10 +60,8 @@ class Hormiga {
     translate(pos.x, pos.y);
     rotate(angle);
     if (gathered) {// when the ant carrys food
-      fill(0, 255, 0);
-      stroke(0);
-      rectMode(CENTER);
-      rect(0, -comidaRecolectada.tamanno.y, comidaRecolectada.tamanno.x, comidaRecolectada.tamanno.y);
+      imageMode(CENTER);
+      image(hoja,0, -comidaRecolectada.tamanno.y,70,60);
     }
     fill(antColor);
     stroke(0);

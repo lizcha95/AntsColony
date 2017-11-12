@@ -16,6 +16,9 @@ float evaporationRate = 0.18;
 Nido nido;
 float nidoX, nidoY;
 
+float ancho_almacenamiento = 100;
+float altura_almacenamiento = 80;
+
 PImage hormiguero;
 PImage background;
 PImage hoja;
@@ -23,16 +26,16 @@ PImage hoja;
 void setup() {
   size(800, 600);
   background(0);
-  nidoX = width/2-150;
-  nidoY = height/2+150;
+  nidoX = width/2;
+  nidoY = height/2;
 
 
-  hormiguero = loadImage("hormiguero2.png");
+  hormiguero = loadImage("hormiguero.png");
   background = loadImage("degradado.jpg");
   background.resize(width, height);
   hoja = loadImage("hoja1.png");
 
-  nido = new Nido(nidoX, nidoY, 500, 300);
+  nido = new Nido(nidoX, nidoY, 400, 300);
   listaComida = new ArrayList<Comida>(); //Click mouse to create food
   hormigas = new ArrayList();
   
