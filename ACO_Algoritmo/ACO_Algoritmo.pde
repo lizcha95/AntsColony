@@ -16,8 +16,8 @@ float evaporationRate = 0.18;
 Nido nido;
 float nidoX, nidoY;
 
-float ancho_almacenamiento = 100;
-float altura_almacenamiento = 80;
+float ancho_almacenamiento = 200;
+float altura_almacenamiento = 90;
 
 PImage hormiguero;
 PImage background;
@@ -26,6 +26,8 @@ PImage hoja;
 void setup() {
   size(800, 600);
   background(0);
+  //fullScreen();
+  
   nidoX = width/2;
   nidoY = height/2;
 
@@ -59,11 +61,15 @@ void draw() {
     hormiga.run();
   }
   for (Feromona feromona : feromonas) {
-    if (feromona.evaporacion >= 255) {
-      feromonas.remove(feromona);
-    }
     feromona.mostrar();
   }
+  for (int i = feromonas.size() - 1; i >= 0; i--) {
+    Feromona p = feromonas.get(i);
+    if (p.evaporacion >= 255) {
+      feromonas.remove(p);
+    }
+  }
+   
 }
 
 void initControls() {

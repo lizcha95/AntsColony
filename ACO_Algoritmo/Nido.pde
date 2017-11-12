@@ -60,10 +60,10 @@ class Nido {
   }
 
   boolean dentroNido(float posX, float posY) {
-    float x0 = pos.x - tamanno.x/2;
-    float x1 = pos.x + tamanno.x/2;
-    float y0 = pos.y - tamanno.y/2;
-    float y1 = pos.y + tamanno.y/2;
+    float x0 = pos.x -  ancho_almacenamiento/2;
+    float x1 = pos.x +  ancho_almacenamiento/2;
+    float y0 = pos.y - altura_almacenamiento/2;
+    float y1 = pos.y + altura_almacenamiento/2;
 
     if (posX >= x0 && posX <= x1 && posY >= y0 && posY <= y1) 
       return true;

@@ -297,9 +297,9 @@ class Hormiga {
   }
 
   void dejarFeromona() {
-    int steps = 60;
+    int steps = 70;
     if (gathered)
-      steps = 30;
+      steps = 40;
     if ((int) movingDistance%steps == 0 && !nido.dentroNido(pos.x, pos.y)) {
       PVector posFero = new PVector(pos.x + random(-2, 2), pos.y + random(-2, 2));
       Feromona p = new Feromona(posFero.x, posFero.y);
