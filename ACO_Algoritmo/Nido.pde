@@ -8,8 +8,10 @@ class Nido {
     pos = new PVector(posX, posY);
     tamanno = new PVector(nidoW, nidoH);
     tamannoAlmacenamiento = 4;
-    filas = (int) nidoW/tamannoAlmacenamiento; 
-    columnas = (int) nidoH/tamannoAlmacenamiento;
+    filas = (int) ancho_almacenamiento/tamannoAlmacenamiento; 
+    columnas = (int) altura_almacenamiento/tamannoAlmacenamiento;
+    
+   
     almacenamiento = new Comida[filas][columnas];
     disponible = new int[2];
     disponible[0] = 0;
@@ -33,7 +35,7 @@ class Nido {
         if (almacenamiento[i][j] != null) {
           Comida f = almacenamiento[i][j];   
          imageMode(CENTER);
-         image(hoja,f.pos.x,f.pos.y,50,40);
+         image(hoja,f.pos.x,f.pos.y,60,50);
         }
       }
     }

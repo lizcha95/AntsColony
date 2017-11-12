@@ -61,7 +61,7 @@ class Hormiga {
     rotate(angle);
     if (gathered) {// when the ant carrys food
       imageMode(CENTER);
-      image(hoja,0, -comidaRecolectada.tamanno.y,70,60);
+      image(hoja,0, -comidaRecolectada.tamanno.y,80,70);
     }
     fill(antColor);
     stroke(0);
