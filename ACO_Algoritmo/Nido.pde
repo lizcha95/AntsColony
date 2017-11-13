@@ -29,6 +29,7 @@ class Nido {
     image(hormiguero, pos.x, pos.y, tamanno.x, tamanno.y);
   }
 
+//Muestra las hojas que las hormigas dejan en el hormiguero
   void mostrarAlmacenamiento() {
     for (int j = 0; j < columnas-1; j++) {
       for (int i = 0; i < filas-1; i++) {

@@ -6,13 +6,9 @@ class Hormiga {
   //PVector VELOCITY = PVector.random2D();
   PVector acceleration  = new PVector(0, 0);
   PVector desired;
-
-  //color colorWithoutFood = color(20, 0, 0);
-  //color colorWithFood = color(25, 25, 112);
-  //color antColor = colorWithoutFood;
   float maxSpeed = 2.5;
   float maxForce = 0.4;
-  float movingDistance; 
+  float distanciaMovimiento; 
 
   int numWandering = 0;
   int maxNumWandering = 0; 
@@ -174,7 +170,7 @@ class Hormiga {
 
     pos.add(VELOCITY);
     acceleration.mult(0);
-    movingDistance += VELOCITY.mag();
+    distanciaMovimiento += VELOCITY.mag();
 
     if (pos.x <= 20 || pos.x >= width-20 ) {
       VELOCITY.x *= -1;
@@ -211,14 +207,14 @@ class Hormiga {
   }
 
   void run() {
-    dejarFeromona();
+    dejarFeromona(); //Cuando la hormiga se mueva va a dejar feromonas
     separar(hormigas); // evita que las hormigas choquen entre ellas
     if (states[0]) {
-      deambular(); 
+      deambular();  //Si la hormiga no encuentra comida o no hay comida entonces "deambula" o camina por cualquier lado
       float r = random(1);
       if (r > 0.3) {
         if (!(nido.dentroNido(pos.x, pos.y))) {// si la hormiga esta fuera del nido
-          if (!gathered) {
+          if (!gathered) { // si la hormiga sabe donde está la comida
             buscarComida();
             if (encontrada) {
               setTrue(states, 1);
@@ -242,7 +238,6 @@ class Hormiga {
         setTrue(states, 2);
       }
     } else if (states[2]) { 
-      //antColor = colorWithFood; 
       verificarCercaniaNido();
       if (cerca) {
         irNido();
@@ -291,7 +286,7 @@ class Hormiga {
         }
       }
     } else if (states[5]) {
-      entregarComida(comidaRecolectada); 
+      entregarComida(comidaRecolectada); //Pone la hoja en el hormiguero
       girar();
       setTrue(states, 0);
     }
@@ -303,7 +298,7 @@ class Hormiga {
     int steps = 70;
     if (gathered)
       steps = 40;
-    if ((int) movingDistance%steps == 0 && !nido.dentroNido(pos.x, pos.y)) {
+    if ((int) distanciaMovimiento%steps == 0 && !nido.dentroNido(pos.x, pos.y)) {
       PVector posFero = new PVector(pos.x + random(-2, 2), pos.y + random(-2, 2));
       Feromona p = new Feromona(posFero.x, posFero.y);
       feromonas.add(p);
@@ -435,7 +430,6 @@ class Hormiga {
     desired = PVector.sub(target, pos); 
     float distancia = desired.mag();
     if (distancia < 10) {
-      //antColor = colorWithFood; 
       gathered = true;
       reached = true;
       actualizarComida(); 
@@ -456,7 +450,6 @@ class Hormiga {
     desired = PVector.sub(target, pos); 
     float distancia = desired.mag();
     if (distancia < 10) {
-      //antColor = colorWithoutFood;  
       reached = true;
       cerca = false;
     }

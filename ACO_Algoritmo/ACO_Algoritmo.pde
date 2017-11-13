@@ -22,8 +22,8 @@ int numAnts = 30;
 float antSize = 0.10;
 
 ArrayList<Comida> listaComida;
-int numFood = 20;
-int totalNumFood;
+int cantidadComida = 20;
+int cantidadTotal;
 
 ArrayList<Feromona> feromonas;
 float EVAPORATION_RATE = 0.18;
@@ -113,12 +113,12 @@ void mousePressed() {
 
 void agregarComida(float posX, float posY) {
   if (!nido.dentroNido(posX, posY)) {
-    for (int i = 0; i < numFood; i++) {
+    for (int i = 0; i < cantidadComida; i++) {
       float x = random(posX - 15, posX + 15);
       float y = random(posY - 15, posY + 15);
       Comida comida = new Comida(x, y);
       listaComida.add(comida);
     }
   }
-  totalNumFood += numFood;
+  cantidadTotal += cantidadComida;
 }
