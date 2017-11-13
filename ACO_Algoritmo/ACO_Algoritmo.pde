@@ -1,17 +1,32 @@
+/*********************************************************
+ 
+ Instituto Tecnológico de Costa Rica
+ Simulación de Sistemas Naturales
+ II Semestre 2017
+ Proyecto: Colonia de Hormigas
+ 
+ Prof. Mauricio Avilés Cisneros
+ 
+ Melissa Molina Corrales
+ Yasiell Vallejos Gómez
+ Liza Chaves Carranza
+ 
+ *********************************************************/
+
 import controlP5.*;
 
 ControlP5 cp5;
 
 ArrayList<Hormiga> hormigas;
-int numAnts = 20;
-float antSize = 0.09;
+int numAnts = 30;
+float antSize = 0.10;
 
 ArrayList<Comida> listaComida;
 int numFood = 20;
 int totalNumFood;
 
 ArrayList<Feromona> feromonas;
-float evaporationRate = 0.18;
+float EVAPORATION_RATE = 0.18;
 
 Nido nido;
 float nidoX, nidoY;
@@ -33,12 +48,12 @@ void setup() {
 
 
   hormiguero = loadImage("hormiguero.png");
-  background = loadImage("degradado.jpg");
+  background = loadImage("fondo2.jpg");
   background.resize(width, height);
-  hoja = loadImage("hoja1.png");
+  hoja = loadImage("hoja.png");
 
   nido = new Nido(nidoX, nidoY, 400, 300);
-  listaComida = new ArrayList<Comida>(); //Click mouse to create food
+  listaComida = new ArrayList<Comida>(); 
   hormigas = new ArrayList();
   
   for (int i = 0; i < numAnts; i++) {
@@ -76,16 +91,18 @@ void initControls() {
   cp5 = new ControlP5(this);
 
   cp5.addSlider("setEvaporationRate")
-    .setValue(evaporationRate)
+    .setValue(EVAPORATION_RATE)
     .setRange(0, 1)
     .setPosition(20, 10)
     .setSize(100, 20)
     .setColorActive(color(0,128,128))
     .setCaptionLabel("Evaporacion Feromonas");
+   
+
 }
 
 void setEvaporationRate(float value) {
-  evaporationRate = value;
+  EVAPORATION_RATE = value;
 }
 
 void mousePressed() {

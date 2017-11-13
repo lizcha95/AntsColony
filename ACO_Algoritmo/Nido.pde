@@ -35,7 +35,7 @@ class Nido {
         if (almacenamiento[i][j] != null) {
           Comida f = almacenamiento[i][j];   
          imageMode(CENTER);
-         image(hoja,f.pos.x,f.pos.y,60,50);
+         image(hoja,f.pos.x,f.pos.y,70,60);
         }
       }
     }

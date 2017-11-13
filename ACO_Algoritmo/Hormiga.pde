@@ -2,32 +2,35 @@ class Hormiga {
   boolean[] states = new boolean[6];
   PVector target;
   PVector pos; 
-  PVector velocity = new PVector(cos(random(TWO_PI)), sin(random(TWO_PI)));
+  PVector VELOCITY = new PVector(cos(random(TWO_PI)), sin(random(TWO_PI)));
+  //PVector VELOCITY = PVector.random2D();
   PVector acceleration  = new PVector(0, 0);
   PVector desired;
 
-  color colorWithoutFood = color(20, 0, 0);
-  color colorWithFood = color(25, 25, 112);
-  color antColor = colorWithoutFood;
+  //color colorWithoutFood = color(20, 0, 0);
+  //color colorWithFood = color(25, 25, 112);
+  //color antColor = colorWithoutFood;
   float maxSpeed = 2.5;
   float maxForce = 0.4;
-  float movingDistance; // needed for determining phero dropping interval
+  float movingDistance; 
 
   int numWandering = 0;
-  int maxNumWandering = 0; // an ant randomly changes moving direcions after a certain number of steps
+  int maxNumWandering = 0; 
 
   Comida comidaRecolectada;
-  boolean encontrada; // food or phero found
-  boolean reached; // food or phero reached
-  boolean gathered; // food gathered
-  boolean cerca; // near the nest
+  boolean encontrada; 
+  boolean reached; 
+  boolean gathered; 
+  boolean cerca; 
 
   //Dibujar las hormigas
-  //head, chest, body
+  //Posiciones del cuerpo de la hormiga
+  // cabeza, cuerpo, pecho
   float[] head = {-25, 20, -40, -40, 40, -40, 25, 20, 10, 80, -10, 80, -25, 20};
   float[] chest = {0, 115, 20, 108};
   float[] body = {-35, 200, -20, 155, 20, 155, 35, 200, 80, 335, -80, 335, -35, 200};
-  //left side
+  
+  //lado izquierdo
   float[] antennaL = {-25, -10, -70, -5, -75, -40, -80, -50};
   float[] leg0LU = {-8, 75, -20, 75, -40, 75, -75, 55};
   float[] leg0LD = {-8, 75, -20, 75, -40, 75, -80, 70};
@@ -35,7 +38,7 @@ class Hormiga {
   float[] leg1LD = {-11, 100, -15, 100, -85, 100, -130, 140};
   float[] leg2LU = {-8, 150, -20, 150, -150, 180, -180, 220};
   float[] leg2LD = {-8, 150, -20, 170, -140, 200, -120, 340};
-  //right side
+  //lado derecho
   float[] antennaR = {25, -10, 70, -5, 75, -40, 80, -50};
   float[] leg0RU = {8, 75, 20, 75, 40, 75, 75, 55};
   float[] leg0RD = {8, 75, 20, 75, 40, 75, 80, 70};
@@ -54,32 +57,32 @@ class Hormiga {
     pos = new PVector(posX, posY);
   }
 
-  void dibujarHormiga() {// drawing ants
-    float angle = velocity.heading() + PI/2;//the ant initially points to the north
+  void dibujarHormiga() {
+    float angle = VELOCITY.heading() + PI/2;
     pushMatrix();
     translate(pos.x, pos.y);
     rotate(angle);
-    if (gathered) {// when the ant carrys food
+    if (gathered) {
       imageMode(CENTER);
-      image(hoja,0, -comidaRecolectada.tamanno.y,80,70);
+      image(hoja,0, -comidaRecolectada.tamanno.y,95,90);
     }
-    fill(antColor);
+    fill(0);
     stroke(0);
-    //head
+    //cabeza
     beginShape();
-    vertex(head[0], head[1]); // first point, y = -4x + 120 ((40, -40) and (25, 20))
-    bezierVertex(head[2], head[3], head[4], head[5], head[6], head[7]);// y = -4x + 120 ((40, -40) and (25, 20))
+    vertex(head[0], head[1]); 
+    bezierVertex(head[2], head[3], head[4], head[5], head[6], head[7]);
     bezierVertex(head[8], head[9], head[10], head[11], head[12], head[13]);
     endShape();
-    //chest
+    //pecho
     ellipse(chest[0], chest[1], chest[2], chest[3]);
-    //body
+    //cuerpo
     beginShape();
-    vertex(body[0], body[1]); // first point, y = -3x +95 ((-20, 155) and (-35, 200))
-    bezierVertex(body[2], body[3], body[4], body[5], body[6], body[7]);// y = -4x + 120 ((40, -40) and (25, 20))
+    vertex(body[0], body[1]); 
+    bezierVertex(body[2], body[3], body[4], body[5], body[6], body[7]);
     bezierVertex(body[8], body[9], body[10], body[11], body[12], body[13]);
     endShape();
-    //antenna
+    //antena
     strokeWeight(1);
     noFill();
     beginShape();
@@ -90,7 +93,7 @@ class Hormiga {
     vertex(antennaR[0], antennaR[1]);
     bezierVertex(antennaR[2], antennaR[3], antennaR[4], antennaR[5], antennaR[6], antennaR[7]);
     endShape();
-    //left side
+    //lado izquierdo
     if (frameCount%30 <= 15) {
       beginShape();
       vertex(leg0LU[0], leg0LU[1]);
@@ -156,28 +159,28 @@ class Hormiga {
   }
 
   void actualizar() {
-    velocity.add(acceleration);
-    velocity.limit(maxSpeed);
+    VELOCITY.add(acceleration);
+    VELOCITY.limit(maxSpeed);
 
-    float angle = velocity.heading(); 
+    float angle = VELOCITY.heading(); 
     float wiggleAngle = PI/60;
     if (states[1] || states[2]) {
       wiggleAngle = PI/15;
     }
-    float len = velocity.mag();
+    float len = VELOCITY.mag();
     float r = random(angle - wiggleAngle, angle + wiggleAngle);
-    velocity = new PVector(len*cos(r), len*sin(r));
+    VELOCITY = new PVector(len*cos(r), len*sin(r));
 
 
-    pos.add(velocity);
+    pos.add(VELOCITY);
     acceleration.mult(0);
-    movingDistance += velocity.mag();
+    movingDistance += VELOCITY.mag();
 
     if (pos.x <= 20 || pos.x >= width-20 ) {
-      velocity.x *= -1;
+      VELOCITY.x *= -1;
     }
     if (pos.y <= 20 || pos.y >= height-20 ) {
-      velocity.y *= -1;
+      VELOCITY.y *= -1;
     }
   }
 
@@ -239,7 +242,7 @@ class Hormiga {
         setTrue(states, 2);
       }
     } else if (states[2]) { 
-      antColor = colorWithFood; 
+      //antColor = colorWithFood; 
       verificarCercaniaNido();
       if (cerca) {
         irNido();
@@ -261,7 +264,7 @@ class Hormiga {
         setTrue(states, 4);
       }
     } else if (states[4]) { 
-      if (gathered) {// if the ant has food
+      if (gathered) {
         verificarCercaniaNido();
         if (cerca) {
           irNido(); 
@@ -310,7 +313,7 @@ class Hormiga {
     }
   }
 
-  void separar (ArrayList<Hormiga> hormigasObt) {// adapted from the flocking example
+  void separar (ArrayList<Hormiga> hormigasObt) {// adaptado del ejemplo de flocking
     float desiredSeparation = 25;
     PVector direccion = new PVector(0, 0);
     int total = 0;
@@ -329,7 +332,7 @@ class Hormiga {
     }
     if (direccion.mag() > 0) {
       direccion.setMag(maxSpeed);
-      direccion.sub(velocity);
+      direccion.sub(VELOCITY);
       direccion.limit(maxForce);
       acceleration.add(direccion);
     }
@@ -350,26 +353,26 @@ class Hormiga {
   PVector seek() {
     PVector desired = PVector.sub(target, pos);
     desired.setMag(maxSpeed);
-    PVector steering = PVector.sub(desired, velocity);
+    PVector steering = PVector.sub(desired, VELOCITY);
     steering.limit(maxForce);
     return steering;
   }
 
   void buscarComida() {
-    setFalse(); // set found, reached and near to false
+    setFalse(); 
     Comida comidaEncontrada = new Comida(-1, -1);
     for (Comida comida : listaComida) {
       if (!comida.encontrada) {
         PVector fLoc = new PVector(comida.pos.x, comida.pos.y);
-        if (PVector.dist(fLoc, pos) < 80 && PVector.angleBetween(velocity, PVector.sub(fLoc, pos)) <= PI/2) {
+        if (PVector.dist(fLoc, pos) < 80 && PVector.angleBetween(VELOCITY, PVector.sub(fLoc, pos)) <= PI/2) {
           comidaEncontrada = comida;
           break;
         }
       }
     }
-    if (comidaEncontrada.pos.x != -1 && comidaEncontrada.pos.y != -1) { // the ant finds food
-      comidaEncontrada.encontrada = true; // other ants are prevented from gathering the food
-      comidaRecolectada = comidaEncontrada; // 
+    if (comidaEncontrada.pos.x != -1 && comidaEncontrada.pos.y != -1) { 
+      comidaEncontrada.encontrada = true; 
+      comidaRecolectada = comidaEncontrada; 
       target = new PVector(comidaEncontrada.pos.x, comidaEncontrada.pos.y);
       encontrada = true;
     }
@@ -394,14 +397,14 @@ class Hormiga {
     for (Feromona feromona : feromonas) {
       if (feromona.evaporacion < 150) {
         PVector pLoc = new PVector(feromona.pos.x, feromona.pos.y);
-        if (PVector.dist(pLoc, pos)  < 100 && PVector.angleBetween(velocity, PVector.sub(pLoc, pos)) <= PI/3) {//
+        if (PVector.dist(pLoc, pos)  < 100 && PVector.angleBetween(VELOCITY, PVector.sub(pLoc, pos)) <= PI/3) {
           feromonaEncontrada = feromona;
           break;
         }
       }
     }
     
-    if (feromonaEncontrada.pos.x != -1 && feromonaEncontrada.pos.y != -1) { // the ant finds food
+    if (feromonaEncontrada.pos.x != -1 && feromonaEncontrada.pos.y != -1) { 
       target = new PVector(feromonaEncontrada.pos.x, feromonaEncontrada.pos.y); 
       encontrada = true;
     } else {
@@ -430,20 +433,20 @@ class Hormiga {
   void verificarComidaAlcanzada() {
     setFalse(); 
     desired = PVector.sub(target, pos); 
-    float d = desired.mag();
-    if (d < 10) {
-      antColor = colorWithFood; 
+    float distancia = desired.mag();
+    if (distancia < 10) {
+      //antColor = colorWithFood; 
       gathered = true;
       reached = true;
-      actualizarComida(); // food gathered is removed from a food site
+      actualizarComida(); 
     }
   }
 
   void verificarFeromonaAlcanzada() {
     setFalse(); 
     desired = PVector.sub(target, pos); 
-    float d = desired.mag();
-    if (d < 10) {
+    float distancia = desired.mag();
+    if (distancia < 10) {
       reached = true;
     }
   }
@@ -451,9 +454,9 @@ class Hormiga {
   void verificarNidoAlcanzado() {
     setFalse(); 
     desired = PVector.sub(target, pos); 
-    float d = desired.mag();
-    if (d < 10) {
-      antColor = colorWithoutFood;  
+    float distancia = desired.mag();
+    if (distancia < 10) {
+      //antColor = colorWithoutFood;  
       reached = true;
       cerca = false;
     }
@@ -482,6 +485,6 @@ class Hormiga {
   }
 
   void girar() {
-    velocity.mult(-1);
+    VELOCITY.mult(-1);
   }
 }

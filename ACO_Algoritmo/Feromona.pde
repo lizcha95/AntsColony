@@ -9,7 +9,7 @@ class Feromona {
   
   Feromona(float posX, float posY) {
     pos = new PVector(posX, posY);
-    size = 5;
+    size = 6;
     nacimiento = frameCount;
   }
 
@@ -21,6 +21,6 @@ class Feromona {
   }
   
   void actualizarEvaporacion() {
-    evaporacion = constrain(evaporationRate * (frameCount - nacimiento), 0, 255);
+    evaporacion = constrain(EVAPORATION_RATE * (frameCount - nacimiento), 0, 255);
   }
 }

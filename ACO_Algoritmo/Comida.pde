@@ -15,6 +15,6 @@ class Comida {
   void mostrar() {
   
     imageMode(CENTER);
-    image(hoja,pos.x,pos.y,70,60);
+    image(hoja,pos.x,pos.y,80,70);
   }
 }
