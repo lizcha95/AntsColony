@@ -2,16 +2,14 @@ class Hormiga {
   boolean[] states = new boolean[6];
   PVector target;
   PVector pos; 
-  PVector VELOCITY = new PVector(cos(random(TWO_PI)), sin(random(TWO_PI)));
-  //PVector VELOCITY = PVector.random2D();
-  PVector acceleration  = new PVector(0, 0);
+  PVector vel;
+  PVector acc;
   PVector desired;
-  float maxSpeed = 2.5;
-  float maxForce = 0.4;
+  float maxSpeed;
+  float maxForce;
   float distanciaMovimiento; 
-
-  int numWandering = 0;
-  int maxNumWandering = 0; 
+  float wandertheta;
+  float mass;
 
   Comida comidaRecolectada;
   boolean encontrada; 
@@ -25,7 +23,7 @@ class Hormiga {
   float[] head = {-25, 20, -40, -40, 40, -40, 25, 20, 10, 80, -10, 80, -25, 20};
   float[] chest = {0, 115, 20, 108};
   float[] body = {-35, 200, -20, 155, 20, 155, 35, 200, 80, 335, -80, 335, -35, 200};
-  
+
   //lado izquierdo
   float[] antennaL = {-25, -10, -70, -5, -75, -40, -80, -50};
   float[] leg0LU = {-8, 75, -20, 75, -40, 75, -75, 55};
@@ -51,16 +49,22 @@ class Hormiga {
     states[4] = false;
     states[5] = false;
     pos = new PVector(posX, posY);
+    maxSpeed = random(2, 3);
+    maxForce = random(0.04, 0.1);
+    wandertheta = 0;
+    mass = random(1.5, 2.5);
+    vel = PVector.random2D();
+    acc  = new PVector(0, 0);
   }
 
   void dibujarHormiga() {
-    float angle = VELOCITY.heading() + PI/2;
+    float angle = vel.heading() + PI/2;
     pushMatrix();
     translate(pos.x, pos.y);
     rotate(angle);
     if (gathered) {
       imageMode(CENTER);
-      image(hoja,0, -comidaRecolectada.tamanno.y,95,90);
+      image(hoja, 0, -comidaRecolectada.tamanno.y, 95, 90);
     }
     fill(0);
     stroke(0);
@@ -155,28 +159,17 @@ class Hormiga {
   }
 
   void actualizar() {
-    VELOCITY.add(acceleration);
-    VELOCITY.limit(maxSpeed);
-
-    float angle = VELOCITY.heading(); 
-    float wiggleAngle = PI/60;
-    if (states[1] || states[2]) {
-      wiggleAngle = PI/15;
-    }
-    float len = VELOCITY.mag();
-    float r = random(angle - wiggleAngle, angle + wiggleAngle);
-    VELOCITY = new PVector(len*cos(r), len*sin(r));
-
-
-    pos.add(VELOCITY);
-    acceleration.mult(0);
-    distanciaMovimiento += VELOCITY.mag();
+    vel.add(acc);
+    vel.limit(maxSpeed);
+    pos.add(vel);
+    acc.mult(0);
+    distanciaMovimiento += vel.mag();
 
     if (pos.x <= 20 || pos.x >= width-20 ) {
-      VELOCITY.x *= -1;
+      vel.x *= -1;
     }
     if (pos.y <= 20 || pos.y >= height-20 ) {
-      VELOCITY.y *= -1;
+      vel.y *= -1;
     }
   }
 
@@ -327,30 +320,38 @@ class Hormiga {
     }
     if (direccion.mag() > 0) {
       direccion.setMag(maxSpeed);
-      direccion.sub(VELOCITY);
+      direccion.sub(vel);
       direccion.limit(maxForce);
-      acceleration.add(direccion);
+      acc.add(direccion);
     }
   }
 
   void deambular() {
-    maxNumWandering = (int) random(300, 500);
-    numWandering++;
-    if (numWandering >= maxNumWandering) { 
-      target = PVector.random2D(); 
-      target.mult(1500);
-      PVector steer = seek();
-      acceleration.add(steer);
-      numWandering = 0;
-    }
+    float wanderR = 15;         // Radius for our "wander circle"
+    float wanderD = 30;         // Distance for our "wander circle"
+    float change = 0.3;
+    wandertheta += random(-change, change);     // Randomly change wander theta
+
+    // Now we have to calculate the new position to steer towards on the wander circle
+    PVector circlepos = vel.get();    // Start with velocity
+    circlepos.normalize();            // Normalize to get heading
+    circlepos.mult(wanderD);          // Multiply by distance
+    circlepos.add(pos);               // Make it relative to boid's position
+
+    float h = vel.heading2D();        // We need to know the heading to offset wandertheta
+
+    PVector circleOffSet = new PVector(wanderR*cos(wandertheta+h), wanderR*sin(wandertheta+h));
+    target = PVector.add(circlepos, circleOffSet);
+    acc.add( seek() );
   }
 
   PVector seek() {
     PVector desired = PVector.sub(target, pos);
     desired.setMag(maxSpeed);
-    PVector steering = PVector.sub(desired, VELOCITY);
+    PVector steering = PVector.sub(desired, vel);
     steering.limit(maxForce);
-    return steering;
+    PVector f = PVector.div(steering, mass);
+    return f;
   }
 
   void buscarComida() {
@@ -359,7 +360,7 @@ class Hormiga {
     for (Comida comida : listaComida) {
       if (!comida.encontrada) {
         PVector fLoc = new PVector(comida.pos.x, comida.pos.y);
-        if (PVector.dist(fLoc, pos) < 80 && PVector.angleBetween(VELOCITY, PVector.sub(fLoc, pos)) <= PI/2) {
+        if (PVector.dist(fLoc, pos) < 80 && PVector.angleBetween(vel, PVector.sub(fLoc, pos)) <= PI/2) {
           comidaEncontrada = comida;
           break;
         }
@@ -388,17 +389,17 @@ class Hormiga {
   void buscarFeromona() {
     setFalse(); 
     Feromona feromonaEncontrada = new Feromona(-1, -1);
-    
+
     for (Feromona feromona : feromonas) {
       if (feromona.evaporacion < 150) {
         PVector pLoc = new PVector(feromona.pos.x, feromona.pos.y);
-        if (PVector.dist(pLoc, pos)  < 100 && PVector.angleBetween(VELOCITY, PVector.sub(pLoc, pos)) <= PI/3) {
+        if (PVector.dist(pLoc, pos)  < 100 && PVector.angleBetween(vel, PVector.sub(pLoc, pos)) <= PI/3) {
           feromonaEncontrada = feromona;
           break;
         }
       }
     }
-    
+
     if (feromonaEncontrada.pos.x != -1 && feromonaEncontrada.pos.y != -1) { 
       target = new PVector(feromonaEncontrada.pos.x, feromonaEncontrada.pos.y); 
       encontrada = true;
@@ -409,19 +410,19 @@ class Hormiga {
 
   void irComida() {
     PVector steer = seek();
-    acceleration.add(steer);
+    acc.add(steer);
     verificarComidaAlcanzada();
   }
 
   void irFeromona() {
     PVector steer = seek();
-    acceleration.add(steer);
+    acc.add(steer);
     verificarFeromonaAlcanzada();
   }
 
   void irNido() {
     PVector steer = seek();
-    acceleration.add(steer);
+    acc.add(steer);
     verificarNidoAlcanzado();
   }
 
@@ -432,7 +433,7 @@ class Hormiga {
     if (distancia < 10) {
       gathered = true;
       reached = true;
-      actualizarComida(); 
+      actualizarComida();
     }
   }
 
@@ -478,6 +479,6 @@ class Hormiga {
   }
 
   void girar() {
-    VELOCITY.mult(-1);
+    vel.mult(-1);
   }
 }

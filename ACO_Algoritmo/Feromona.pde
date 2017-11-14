@@ -1,26 +1,28 @@
+import java.util.Iterator;
+
 class Feromona {
   PVector pos; 
   float size, evaporacion;
-  int nacimiento;
   color col = color(255, 0, 0);
-
-  Feromona() {
-  }
+  float lifeSpan = 255;
   
   Feromona(float posX, float posY) {
     pos = new PVector(posX, posY);
     size = 6;
-    nacimiento = frameCount;
   }
 
   void mostrar() {
     actualizarEvaporacion();
     noStroke();
-    fill(col, 255 - evaporacion);
+    fill(col, lifeSpan);
     ellipse(pos.x, pos.y, size, size);
   }
   
   void actualizarEvaporacion() {
-    evaporacion = constrain(EVAPORATION_RATE * (frameCount - nacimiento), 0, 255);
+    lifeSpan -= EVAPORATION_RATE;
+  }
+  
+  boolean isDead() {
+    return lifeSpan <= 0;
   }
 }

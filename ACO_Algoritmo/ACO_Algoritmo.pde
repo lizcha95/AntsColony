@@ -42,7 +42,7 @@ void setup() {
   size(800, 600);
   background(0);
   //fullScreen();
-  
+
   nidoX = width/2;
   nidoY = height/2;
 
@@ -55,7 +55,7 @@ void setup() {
   nido = new Nido(nidoX, nidoY, 400, 300);
   listaComida = new ArrayList<Comida>(); 
   hormigas = new ArrayList();
-  
+
   for (int i = 0; i < numAnts; i++) {
     Hormiga hormiga = new Hormiga(nidoX, nidoY);
     hormiga.cambiarTamanno();
@@ -78,13 +78,13 @@ void draw() {
   for (Feromona feromona : feromonas) {
     feromona.mostrar();
   }
+  
   for (int i = feromonas.size() - 1; i >= 0; i--) {
-    Feromona p = feromonas.get(i);
-    if (p.evaporacion >= 255) {
-      feromonas.remove(p);
+    Feromona feromona = feromonas.get(i);
+    if(feromona.isDead()){
+      feromonas.remove(i);
     }
   }
-   
 }
 
 void initControls() {
@@ -92,23 +92,21 @@ void initControls() {
 
   cp5.addSlider("setEvaporationRate")
     .setValue(EVAPORATION_RATE)
-    .setRange(0, 1)
+    .setRange(0, 10)
     .setPosition(20, 10)
     .setSize(100, 20)
-    .setColorActive(color(0,128,128))
+    .setColorActive(color(0, 128, 128))
     .setCaptionLabel("Evaporacion Feromonas");
-   
-
 }
 
-void setEvaporationRate(float value) {
+void setEvapo1ationRate(float value) {
   EVAPORATION_RATE = value;
 }
 
 void mousePressed() {
   if (mouseButton == RIGHT) {
     agregarComida(mouseX, mouseY);
-  } 
+  }
 }
 
 void agregarComida(float posX, float posY) {

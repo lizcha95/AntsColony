@@ -3,9 +3,6 @@ class Comida {
   PVector tamanno;
   boolean encontrada;
   
-  Comida() {
-  }
-  
   Comida(float posX, float posY) {
     pos = new PVector(posX, posY);
     tamanno = new PVector(random(2,6),random(2,6));
