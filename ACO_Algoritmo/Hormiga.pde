@@ -16,6 +16,9 @@ class Hormiga {
   boolean reached; 
   boolean gathered; 
   boolean cerca; 
+  
+  int numWandering = 0;
+  int maxNumWandering = 0; 
 
   //Dibujar las hormigas
   //Posiciones del cuerpo de la hormiga
@@ -205,19 +208,19 @@ class Hormiga {
     if (states[0]) {
       deambular();  //Si la hormiga no encuentra comida o no hay comida entonces "deambula" o camina por cualquier lado
       float r = random(1);
-      if (r > 0.3) {
+      if (r > 0.4) {
         if (!(nido.dentroNido(pos.x, pos.y))) {// si la hormiga esta fuera del nido
-          if (!gathered) { // si la hormiga sabe donde está la comida
+          if (!gathered) { // si la hormiga no tiene comida, entonces busca comida si hay, sino solo deambula
             buscarComida();
-            if (encontrada) {
+            if (encontrada) { // Si las hormigas encuentran la comida
               setTrue(states, 1);
             } else { 
               buscarFeromona();
-              if (encontrada) { 
+              if (encontrada) { // Si las hormigas encuentran una feromona
                 setTrue(states, 3);
               }
             }
-          } else {
+          } else { //Cuando la hormiga lleva comida, busca feromonas para volver al nido
             buscarFeromona(); 
             if (encontrada) { 
               setTrue(states, 3);
@@ -225,49 +228,49 @@ class Hormiga {
           }
         }
       }
-    } else if (states[1]) { 
+    } else if (states[1]) { //Cuando la hormiga sabe donde está ubicada la comida, entonces se dirige hacia la fuente de comida
       irComida();
-      if (reached) { 
+      if (reached) { // Si la hormiga agarra la comida
         setTrue(states, 2);
       }
-    } else if (states[2]) { 
+    } else if (states[2]) { // Cuando una hormiga alcanza la comida
       verificarCercaniaNido();
-      if (cerca) {
+      if (cerca) { // Si la hormiga está cerca del nido, entonces se mueve hacia él.
         irNido();
-        if (reached) { 
+        if (reached) { //Verifica si la hormiga ya llegó al nido
           setTrue(states, 5);
         }
-      } else {
+      } else { //Si la hormiga está lejos del nido se devuelve y sigue buscando comida o feromonas
         girar();
         buscarFeromona(); 
         if (encontrada) { 
           setTrue(states, 3);
         } else { 
-          setTrue(states, 0);
+          setTrue(states, 0); // continua deambulando hasta encontrar algo
         }
       }
-    } else if (states[3]) { 
-      irFeromona(); 
-      if (reached) {
+    } else if (states[3]) { // Cuando una hormiga sabe dónde está una feromona
+      irFeromona(); //La hormiga va hacia la feromona
+      if (reached) { //Cuando la hormiga alcanza la feromona
         setTrue(states, 4);
       }
-    } else if (states[4]) { 
-      if (gathered) {
+    } else if (states[4]) { //Cuando la hormiga alcanza la feromona
+      if (gathered) { // Si la hormiga tiene comida
         verificarCercaniaNido();
-        if (cerca) {
+        if (cerca) { // Si la hormiga está cerca del nido, se mueve hacia él
           irNido(); 
-          if (reached) {
+          if (reached) { // Verifica si la hormiga llegó al nido
             setTrue(states, 5);
           }
-        } else { 
-          buscarFeromona(); 
+        } else { // Si la hormiga con comida está lejos del nido
+          buscarFeromona(); // Sigue buscando las feromonas del camino más corto hacia el nido
           if (encontrada) { 
             setTrue(states, 3);
           } else { 
             setTrue(states, 0);
           }
         }
-      } else {
+      } else { // Si la hormiga aún no tiene comida, sigue buscando comida
         buscarComida(); 
         if (encontrada) {
           setTrue(states, 1);
@@ -278,7 +281,7 @@ class Hormiga {
           }
         }
       }
-    } else if (states[5]) {
+    } else if (states[5]) { // Cuando una hormiga llega al nido, entrega la comida, y se devuelve a buscar más comida
       entregarComida(comidaRecolectada); //Pone la hoja en el hormiguero
       girar();
       setTrue(states, 0);
@@ -301,7 +304,7 @@ class Hormiga {
     }
   }
 
-  void separar (ArrayList<Hormiga> hormigasObt) {// adaptado del ejemplo de flocking
+  void separar (ArrayList<Hormiga> hormigasObt) {// Ejemplo de flocking
     float desiredSeparation = 25;
     PVector direccion = new PVector(0, 0);
     int total = 0;
@@ -344,8 +347,9 @@ class Hormiga {
     target = PVector.add(circlepos, circleOffSet);
     acc.add( seek() );
   }
-
-  PVector seek() {
+  
+ 
+ PVector seek() {
     PVector desired = PVector.sub(target, pos);
     desired.setMag(maxSpeed);
     PVector steering = PVector.sub(desired, vel);

@@ -5,6 +5,7 @@ class Feromona {
   float size, evaporacion;
   color col = color(255, 0, 0);
   float lifeSpan = 255;
+  int nacimiento = frameCount;
   
   Feromona(float posX, float posY) {
     pos = new PVector(posX, posY);
@@ -23,6 +24,6 @@ class Feromona {
   }
   
   boolean isDead() {
-    return lifeSpan <= 0;
+    return lifeSpan <= 10;
   }
 }

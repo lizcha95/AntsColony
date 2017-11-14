@@ -48,7 +48,7 @@ void setup() {
 
 
   hormiguero = loadImage("hormiguero.png");
-  background = loadImage("fondo2.jpg");
+  background = loadImage("cesped.jpg");
   background.resize(width, height);
   hoja = loadImage("hoja.png");
 
@@ -99,7 +99,7 @@ void initControls() {
     .setCaptionLabel("Evaporacion Feromonas");
 }
 
-void setEvapo1ationRate(float value) {
+void setEvaporationRate(float value) {
   EVAPORATION_RATE = value;
 }
 
